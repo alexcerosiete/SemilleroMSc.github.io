@@ -1,0 +1,20 @@
+[05/11/2024 13:41:05 > f713f0: SYS INFO] Status changed to Starting
+[05/11/2024 13:41:05 > f713f0: SYS WARN] 'Always On' doesn't appear to be enabled for this Web App. To ensure your continuous job doesn't stop running when the SCM host is idle for too long, consider enabling 'Always On' in the configuration settings for your Web App. Note: 'Always On' is available only in Basic, Standard and Premium modes.
+[05/11/2024 13:41:05 > f713f0: SYS INFO] WebJob singleton setting is False
+[05/11/2024 13:41:05 > f713f0: SYS INFO] Run script 'DaasRunner.exe' with script host - 'WindowsScriptHost'
+[05/11/2024 13:41:05 > f713f0: SYS INFO] Status changed to Running
+[05/11/2024 14:34:30 > f713f0: SYS INFO] WebJob is stopping due to website shutting down
+[05/11/2024 14:34:30 > f713f0: SYS INFO] Status changed to Stopping
+[05/11/2024 14:34:35 > f713f0: ERR ] Thread was being aborted.
+[05/11/2024 14:34:35 > f713f0: SYS INFO] WebJob process was aborted
+[05/11/2024 14:34:35 > f713f0: SYS INFO] Status changed to Stopped
+[05/12/2024 03:34:17 > f713f0: SYS INFO] Status changed to Starting
+[05/12/2024 03:34:17 > f713f0: SYS WARN] 'Always On' doesn't appear to be enabled for this Web App. To ensure your continuous job doesn't stop running when the SCM host is idle for too long, consider enabling 'Always On' in the configuration settings for your Web App. Note: 'Always On' is available only in Basic, Standard and Premium modes.
+[05/12/2024 03:34:17 > f713f0: SYS INFO] WebJob singleton setting is False
+[05/12/2024 03:34:18 > f713f0: SYS INFO] Run script 'DaasRunner.exe' with script host - 'WindowsScriptHost'
+[05/12/2024 03:34:18 > f713f0: SYS INFO] Status changed to Running
+[05/12/2024 03:55:13 > f713f0: SYS INFO] WebJob is stopping due to website shutting down
+[05/12/2024 03:55:13 > f713f0: SYS INFO] Status changed to Stopping
+[05/12/2024 03:55:18 > f713f0: ERR ] Thread was being aborted.
+[05/12/2024 03:55:18 > f713f0: SYS INFO] WebJob process was aborted
+[05/12/2024 03:55:18 > f713f0: SYS INFO] Status changed to Stopped

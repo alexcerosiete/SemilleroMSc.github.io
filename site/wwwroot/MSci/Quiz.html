@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900" rel="stylesheet">
+    <link rel="icon" href="Imagenes/logo msc.png" type="image/png">
+    <title>Quiz-MSc MathScience</title>
+    <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/fontawesome.css">
+    <link rel="stylesheet" href="assets/css/templatemo-grad-school.css">
+    <link rel="stylesheet" href="assets/css/owl.css">
+    <link rel="stylesheet" href="assets/css/lightbox.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, #0f1a27, #1e2c3d);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #quiz-container {
+            max-width: 600px;
+            padding: 40px;
+            background-color: rgba(30, 44, 61, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        #question {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            background-color: #e67e22;
+            padding: 10px 20px;
+            border-radius: 10px;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.5s ease;
+        }
+
+        #question.show {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        #options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            grid-gap: 15px;
+        }
+
+        #options div {
+            padding: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+            background-color: #2c3e50;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            transform: translateY(50px);
+            animation: slide-in 0.5s ease forwards;
+            position: relative;
+        }
+
+        #options div:hover {
+            background-color: #3b5169;
+        }
+
+        #options div.correct {
+            background-color: #e67e22;
+            color: #fff;
+        }
+
+        #options div.incorrect {
+            background-color: #ff69b4;
+            color: #fff;
+        }
+
+        #options div.selected::after {
+            content: '\f00c';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            top: 50%;
+            right: 10px;
+            transform: translateY(-50%);
+        }
+
+        @keyframes slide-in {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .button-container button {
+            margin: 0 10px;
+        }
+
+        button {
+            background-color: #e67e22;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            margin: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        button:hover {
+            background-color: #d35400;
+        }
+
+        #timer {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            padding: 5px 10px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 5px;
+        }
+
+        #name-input {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+            background-color: #2c3e50;
+            color: #fff;
+        }
+
+        #start-btn {
+            background-color: #e67e22;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #start-btn:hover {
+            background-color: #d35400;
+        }
+
+        #result {
+            display: none;
+            margin-top: 20px;
+            background-color: rgba(30, 44, 61, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        #result.show {
+            display: block;
+        }
+
+        #result-text {
+            font-size: 20px;
+            font-weight: bold;
+            animation: fadeIn 1s ease;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="quiz-container">
+        <div class="logo">
+            <img src="Imagenes/logo msc.png" alt="Logo MSc MathScience" height="150" width="150">
+            <a href="https://mathscience.azurewebsites.net/MSci/PrincipalMSc.html"><em>MathScience</em></a>
+        </div>
+        <input type="text" id="name-input" placeholder="Ingresa tu nombre" />
+        <button id="start-btn">Comenzar</button>
+        <div id="question"></div>
+        <div id="options"></div>
+        <div class="button-container">
+            <button id="submit-btn" disabled>Verificar</button>
+            <button id="next-btn" disabled>Continuar</button>
+        </div>
+        <div id="timer">30</div>
+        <div id="result">
+            <p id="result-text"></p>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "¿Cuál es el continente más pequeño del mundo?",
+                answers: ["Asia", "Australia", "Ártico", "África"],
+                correctAnswer: "Australia"
+            },
+            {
+                question: "¿Cuál es la capital de Perú?",
+                answers: ["Lima", "Bogotá", "Santiago", "Quito"],
+                correctAnswer: "Lima"
+            },
+            {
+                question: "¿Cuál es el río más largo del mundo?",
+                answers: ["Nilo", "Amazonas", "Misisipi", "Yangtsé"],
+                correctAnswer: "Nilo"
+            }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timeLeft = 30;
+        let timer;
+        let selectedOptions = [];
+
+        document.getElementById("start-btn").addEventListener("click", () => {
+            const playerName = document.getElementById("name-input").value.trim();
+            if (playerName) {
+                document.getElementById("name-input").style.display = "none";
+                document.getElementById("start-btn").style.display = "none";
+                displayQuestion();
+            } else {
+                alert("Debes ingresar tu nombre para comenzar.");
+            }
+        });
+
+        function displayQuestion() {
+            const questionElement = document.getElementById("question");
+            const optionsElement = document.getElementById("options");
+            const question = questions[currentQuestion];
+
+            questionElement.textContent = question.question;
+            optionsElement.innerHTML = "";
+
+            setTimeout(() => {
+                questionElement.classList.add("show");
+            }, 100);
+
+            question.answers.forEach((answer, index) => {
+                const option = document.createElement("div");
+                option.textContent = answer;
+                option.addEventListener("click", () => selectAnswer(option));
+                optionsElement.appendChild(option);
+
+                setTimeout(() => {
+                    option.classList.add("slide-in");
+                }, 300 + (index * 200));
+            });
+
+            document.getElementById("submit-btn").disabled = false;
+            document.getElementById("next-btn").disabled = true;
+
+            timeLeft = 30;
+            updateTimer();
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function selectAnswer(option) {
+            const options = document.querySelectorAll("#options div");
+            options.forEach(opt => {
+                opt.classList.remove("selected");
+            });
+
+            option.classList.add("selected");
+            selectedOptions[currentQuestion] = option;
+        }
+
+        function verifyAnswer() {
+            const options = document.querySelectorAll("#options div");
+            const correctAnswer = questions[currentQuestion].correctAnswer;
+
+            clearInterval(timer);
+
+            options.forEach(option => {
+                if (option.textContent === correctAnswer) {
+                    option.classList.add("correct");
+                    if (selectedOptions[currentQuestion] === option) {
+                        score++;
+                    }
+                } else if (selectedOptions[currentQuestion] === option) {
+                    option.classList.add("incorrect");
+                }
+            });
+
+            document.getElementById("submit-btn").disabled = true;
+            document.getElementById("next-btn").disabled = false;
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                displayQuestion();
+            } else {
+                showResults();
+            }
+        }
+
+        function updateTimer() {
+            const timerElement = document.getElementById("timer");
+            timerElement.textContent = timeLeft;
+
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                verifyAnswer();
+                nextQuestion();
+            } else {
+                timeLeft--;
+            }
+        }
+
+        function showResults() {
+            const resultElement = document.getElementById("result");
+            const resultTextElement = document.getElementById("result-text");
+            const playerName = document.getElementById("name-input").value.trim();
+            resultTextElement.textContent = `¡Excelente ${playerName}!, Felicitaciones por tu desempeño. Obtuviste una puntuación de: ${score}/${questions.length}. Sigue esforzándote y mejorando día a día.`;
+            resultElement.classList.add("show");
+        }
+
+        document.getElementById("submit-btn").addEventListener("click", () => {
+            verifyAnswer();
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById("submit-btn").disabled = true;
+            }
+        });
+
+        document.getElementById("next-btn").addEventListener("click", () => {
+            nextQuestion();
+            if (currentQuestion === questions.length - 1) {
+                document.getElementById("next-btn").disabled = true;
+            }
+        });
+    </script>
+</body>
+</html>

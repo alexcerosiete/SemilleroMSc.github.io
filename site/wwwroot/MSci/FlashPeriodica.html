@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de la Tabla Periódica</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:100,200,300,400,500,600,700,800,900"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: linear-gradient(to bottom, #0f1a27, #1e2c3d);
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 800px;
+            padding: 40px;
+            background-color: rgba(30, 44, 61, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        h1 {
+            color: #e67e22;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin-bottom: 30px;
+        }
+
+        .group-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .group-box {
+            background-color: #2c3e50;
+            border: 2px solid #e67e22;
+            padding: 10px;
+            margin: 10px;
+            min-width: 120px;
+            text-align: center;
+            border-radius: 5px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+        }
+
+        .group-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .elements-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        .element {
+            background-color: #f0f0f0;
+            border: 2px solid #ccc;
+            padding: 10px 15px;
+            margin: 5px;
+            cursor: move;
+            user-select: none;
+            border-radius: 5px;
+            box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+            transition: all 0.3s ease;
+            color: #192a3d; /* Color azul oscuro */
+        }
+
+        .element:hover {
+            transform: translateY(-5px);
+            box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.7);
+        }
+
+        .correct {
+            background-color: #e67e22;
+            color: #fff;
+            border-color: #d35400;
+        }
+
+        .incorrect {
+            background-color: #ff69b4;
+            color: #fff;
+            border-color: #e53935;
+        }
+
+        #timer {
+            font-size: 24px;
+            margin-bottom: 10px;
+            display: none;
+        }
+
+        #result {
+            color: #fff;
+            margin-bottom: 20px;
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <img src="Imagenes/logo msc.png" alt="Logo MSc MathScience" height="100">
+        <h1>Juego de la Tabla Periódica</h1>
+        <div class="group-container"></div>
+        <div class="elements-container"></div>
+        <div id="timer"></div>
+        <div id="result" class="hidden"></div>
+        <button id="submit-btn" class="hidden">Enviar Respuesta</button>
+    </div>
+
+    <script>
+        const groupContainer = document.querySelector('.group-container');
+        const elementsContainer = document.querySelector('.elements-container');
+        const resultDiv = document.getElementById('result');
+        const timerDiv = document.getElementById('timer');
+        const submitBtn = document.getElementById('submit-btn');
+
+        let draggingElement = null;
+        let timeLeft = 60;
+        let timer;
+        let startTime;
+
+        const elementsData = [
+            { symbol: 'Pb', group: 14, period: 6, atomicNumber: 82 },
+            { symbol: 'Al', group: 13, period: 3, atomicNumber: 13 },
+            { symbol: 'Sb', group: 15, period: 5, atomicNumber: 51 },
+            { symbol: 'Se', group: 16, period: 4, atomicNumber: 34 },
+            { symbol: 'Ga', group: 13, period: 4, atomicNumber: 31 },
+            { symbol: 'B', group: 13, period: 2, atomicNumber: 5 },
+            { symbol: 'Ge', group: 14, period: 4, atomicNumber: 32 },
+            { symbol: 'Bi', group: 15, period: 6, atomicNumber: 83 },
+            { symbol: 'As', group: 15, period: 4, atomicNumber: 33 },
+            { symbol: 'In', group: 13, period: 5, atomicNumber: 49 },
+            { symbol: 'Tl', group: 13, period: 6, atomicNumber: 81 },
+            { symbol: 'Te', group: 16, period: 5, atomicNumber: 52 },
+            { symbol: 'Sn', group: 14, period: 5, atomicNumber: 50 },
+            { symbol: 'C', group: 14, period: 2, atomicNumber: 6 },
+            { symbol: 'N', group: 15, period: 2, atomicNumber: 7 },
+            { symbol: 'Po', group: 16, period: 6, atomicNumber: 84 },
+            { symbol: 'Al', group: 13, period: 3, atomicNumber: 13 },
+            { symbol: 'P', group: 15, period: 3, atomicNumber: 15 },
+            { symbol: 'F', group: 17, period: 2, atomicNumber: 9 },
+            { symbol: 'Ar', group: 18, period: 3, atomicNumber: 18 },
+            { symbol: 'Br', group: 17, period: 4, atomicNumber: 35 },
+            { symbol: 'Si', group: 14, period: 3, atomicNumber: 14 },
+            { symbol: 'He', group: 18, period: 1, atomicNumber: 2 },
+            { symbol: 'At', group: 17, period: 6, atomicNumber: 85 },
+            { symbol: 'Ne', group: 18, period: 2, atomicNumber: 10 },
+            { symbol: 'Kr', group: 18, period: 4, atomicNumber: 36 },
+            { symbol: 'Cl', group: 17, period: 3, atomicNumber: 17 },
+            { symbol: 'I', group: 17, period: 5, atomicNumber: 53 },
+            { symbol: 'Xe', group: 18, period: 5, atomicNumber: 54 },
+            { symbol: 'O', group: 16, period: 2, atomicNumber: 8 },
+            { symbol: 'Rn', group: 18, period: 6, atomicNumber: 86 },
+        ];
+
+        const groupNames = {
+            13: 'Grupo 13: Térreos',
+            14: 'Grupo 14: Carbonoideos',
+            15: 'Grupo 15: Nitrogenoideos',
+            16: 'Grupo 16: Calcógenos o Anfígenos',
+            17: 'Grupo 17: Halógenos',
+            18: 'Grupo 18: Gases Nobles'
+        };
+
+        function createGroupBoxes() {
+            for (let i = 13; i <= 18; i++) {
+                const groupBox = document.createElement('div');
+                groupBox.classList.add('group-box');
+                groupBox.textContent = groupNames[i] || `Grupo ${i}`;
+                groupBox.addEventListener('dragover', dragOver);
+                groupBox.addEventListener('drop', drop);
+                groupContainer.appendChild(groupBox);
+            }
+        }
+
+        function createElements() {
+            const shuffledElements = shuffleArray(elementsData.slice(0, 25));
+            shuffledElements.forEach(element => {
+                const el = document.createElement('div');
+                el.classList.add('element');
+                el.textContent = element.symbol;
+                el.setAttribute('data-group', element.group);
+                el.setAttribute('data-period', element.period);
+                el.setAttribute('data-atomic-number', element.atomicNumber);
+                el.draggable = true;
+                el.addEventListener('dragstart', dragStart);
+                elementsContainer.appendChild(el);
+            });
+        }
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        function dragStart(e) {
+            draggingElement = e.target;
+            e.dataTransfer.effectAllowed = 'move';
+            e.dataTransfer.setData('text/plain', null);
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            const groupBox = e.target.closest('.group-box');
+            if (groupBox && draggingElement) {
+                const group = draggingElement.getAttribute('data-group');
+                const groupNumber = groupBox.textContent.split(':')[0].split(' ')[1];
+
+                if (group === groupNumber) {
+                    groupBox.appendChild(draggingElement);
+                    draggingElement.classList.remove('incorrect');
+                    draggingElement.classList.add('correct');
+                    checkGameComplete();
+                } else {
+                    draggingElement.classList.remove('correct');
+                    draggingElement.classList.add('incorrect');
+                    setTimeout(() => {
+                        draggingElement.classList.remove('incorrect');
+                    }, 500);
+                }
+            }
+            draggingElement = null;
+        }
+
+        function checkGameComplete() {
+            const groupBoxes = document.querySelectorAll('.group-box');
+            let allCorrect = true;
+            groupBoxes.forEach(groupBox => {
+                const elements = groupBox.querySelectorAll('.element');
+                elements.forEach(element => {
+                    if (!element.classList.contains('correct')) {
+                        allCorrect = false;
+                    }
+                });
+            });
+
+            if (allCorrect) {
+                clearInterval(timer);
+                const elapsedTime = Math.floor((Date.now() - startTime) / 1000);
+                resultDiv.textContent = `¡Completaste la actividad en ${elapsedTime} segundos! ¡Sigue mejorando día a día!`;
+                resultDiv.classList.remove('hidden');
+                submitBtn.classList.remove('hidden');
+            }
+        }
+
+        function startGame() {
+            startTime = Date.now();
+            createGroupBoxes();
+            createElements();
+            updateTimer();
+            timer = setInterval(updateTimer, 1000);
+        }
+
+        function updateTimer() {
+            timerDiv.textContent = timeLeft;
+            if (timeLeft === 0) {
+                clearInterval(timer);
+                resultDiv.textContent = 'Se acabó el tiempo. Inténtalo nuevamente.';
+                resultDiv.classList.remove('hidden');
+            } else {
+                timeLeft--;
+            }
+        }
+
+        submitBtn.addEventListener('click', () => {
+            clearInterval(timer);
+            resultDiv.textContent = `¡Completaste la actividad en ${Math.floor((Date.now() - startTime) / 1000)} segundos! ¡Sigue mejorando día a día!`;
+            resultDiv.classList.remove('hidden');
+            submitBtn.classList.add('hidden');
+        });
+
+        startGame();
+
+    </script>
+</body>
+
+</html>
